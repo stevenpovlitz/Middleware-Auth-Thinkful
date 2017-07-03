@@ -56,6 +56,10 @@ const USERS = [
   }
 ];
 
+function matching(un, pw, element) {
+  return element.username == un && element.pw == pw;
+}
+
 
 // write a `gateKeeper` middleware function that:
 //  1. looks for a 'x-username-and-password' request header
@@ -65,8 +69,36 @@ const USERS = [
 //     (aka, `req.user = matchedUser`)
 function gateKeeper(req, res, next) {
   // your code should replace the line below
+  
+  let puser = req.get('x-username-and-password');
+  let userobj = queryString.parse(puser);
+  // console.log(userobj.user + " , " + userobj.pass);
+
+  // below line taken from sollution - my unworking stuff commented out
+  req.user = USERS.find(
+    (usr, index) => usr.userName === userobj.user && usr.password === userobj.pass
+  );
+  next();
+  
+  
+  /*for (let i = 0; i < USERS.length; i++) {
+    console.log(USERS[i].username + " , " + USERS[i].pass);
+    if (userobj.user == USERS[i].userName && 
+        userobj.pass == USERS[i].password) {
+      // console.log(userobj + "\n\n" + USERS[i]);
+      // console.log("found username and pass match: " + USERS[i].username + 
+                  // " , " + USERS[i].pass + ", " + typeof(USERS[i]));
+      req.user = userobj;
+      // break;
+    }
+  }*/
+  // req.user=Users.find(U)
+  
+  // console.log(puser);
+  
   next();
 }
+app.use(gateKeeper);
 
 // Add the middleware to your app!
 
